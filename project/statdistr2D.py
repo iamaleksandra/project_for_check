@@ -31,7 +31,7 @@ for i in range(N):
     u = Vin + i*dV
     for j in range(N):
         w = Vin + j*dV
-        v = [u, 0, w]
+        v = np.array([u, 0, w])
         arr[i][j] = mod.distrfunc2(r, v, Vs, mu, beta, Rs)
 
 xx, yy = makeData(Vin, Vfin, dV)

@@ -50,7 +50,14 @@ def matrix3(r, v, alph):
 
 def distrfunc2(r, v, Vs, mu, beta, Rs):
     """
-    Distribution function
+    Calculate the distribution function of neutral hydrogen within the 
+    heliosphere
+    r&v are position and velocity vectors in Cartesian coordinate system with 
+    Sun at the center
+    Vs is velocity vector of local ISM
+    mu is gravitational force to radiative pressure ratio
+    
+    Rs is the radius of the heliosphere    
     """
     distr = 0
     alph = G*Msol*(1-mu)/(V)**2/L
@@ -120,7 +127,8 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
 
 def polarangle(r):
     """
-    Вычисление полярного угла по заданным декартовым координатам
+    Calculate the polar angle for given Cartesian coordinates
+    r is position vector in Cartesian coordinate system
     """
     alph = np.arctan2(r[1], r[0])
     if alph < 0:

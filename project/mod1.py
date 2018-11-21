@@ -32,19 +32,19 @@ sigtot = fos*np.pi*e_cgs**(2)/me_cgs/ligsp_cgs  # см^2/c
 
 
 def matrix3(r, v, alph):
-    r_abs = np.sqrt(np.inner(r, r))
+    r_abs = np.linalg.norm(r)
     ez = np.cross(r, v)
     ez_abs = np.sqrt(np.inner(ez, ez))
-    ez = np.array([ez[0]/ez_abs, ez[1]/ez_abs, ez[2]/ez_abs])
+    ez /= ez_abs
     vrv = np.cross(v, np.cross(r, v))
     anr = np.array([alph*r[0]/r_abs, alph*r[1]/r_abs, alph*r[2]/r_abs])
-    ex = np.array([vrv[0] - anr[0], vrv[1] - anr[1], vrv[2] - anr[2]])
+    ex = vrv - anr
     ex_abs = np.sqrt(np.inner(ex, ex))
     ex = np.array([ex[0]/ex_abs, ex[1]/ex_abs, ex[2]/ex_abs])
     ey = np.cross(ez, ex)
     eyabs = np.sqrt(np.inner(ey, ey))
     ey = np.array([ey[0]/eyabs, ey[1]/eyabs, ey[2]/eyabs])
-    matr = np.array([ex, ey, ez])
+    matr = np.stack([ex, ey, ez])
     return matr
 
 
@@ -59,7 +59,6 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
     
     Rs is the radius of the heliosphere    
     """
-    distr = 0
     alph = G*Msol*(1-mu)/(V)**2/L
     matr = matrix3(r, v, alph)
     r = matr@r
@@ -71,33 +70,25 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
     e = np.sqrt(1 + 2*E*np.inner(M, M)/alph**2)
     a = abs(alph/2/E)
     vabs = np.sqrt(np.inner(v, v))  # скорость частицы на сфере
-    if E < 0:
-        if (vabs**2/2 - alph/rabs + alph/Rs) > 0:
-            vs = np.sqrt(2*(vabs**2/2 - alph/rabs + alph/Rs))
-            ksis = - np.arccos((1 - Rs/a)/e)
-            ksir = np.sign(r[1])*np.arccos(r[0]/a+e)
-            tggam = - np.sqrt(1 - e**2)/np.tan(ksis)
-            us3 = - np.sign(ksis)*vs/np.sqrt(1 + tggam**2)
-            vs3 = - np.sign(ksis)*tggam*vs/np.sqrt(1 + tggam**2)
-            ws3 = 0
-            v = np.array([us3, vs3, ws3])
-            par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2
-            fm = norm*np.exp(-m*par*V**2/2/kB/Ts)  # значение ф-и на границе
-            xs = a*(np.cos(ksis) - e)
-            ys = a*np.sqrt(1 - e**2)*np.sin(ksis)
-            rs = np.array([xs, ys])
-            xr = a*(np.cos(ksir) - e)
-            yr = a*np.sqrt(1 - e**2)*np.sin(ksir)
-            r = np.array([xr, yr])
-            tets = polarangle(rs)
-            tetr = polarangle(r)
-            M0 = np.sqrt(np.inner(M, M))
-            if tetr > np.pi:
-                extin = abs(tetr - tets)/M0
-            else:
-                extin = (2*np.pi - abs(tetr - tets))/M0
-            distr = fm*np.exp(-beta*L/V*extin)
-    elif (vabs**2/2 - alph/rabs + alph/Rs) > 0:
+    if (vabs**2/2 - alph/rabs + alph/Rs) <= 0:
+        return 0
+    if E > 0:
+        vs = np.sqrt(2*(vabs**2/2 - alph/rabs + alph/Rs))
+        ksis = - np.arccos((1 - Rs/a)/e)
+        ksir = np.sign(r[1])*np.arccos(r[0]/a+e)
+        tggam = - np.sqrt(1 - e**2)/np.tan(ksis)
+        us3 = - np.sign(ksis)*vs/np.sqrt(1 + tggam**2)
+        vs3 = - np.sign(ksis)*tggam*vs/np.sqrt(1 + tggam**2)
+        ws3 = 0
+        v = np.array([us3, vs3, ws3])
+        par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2
+        fm = norm*np.exp(-m*par*V**2/2/kB/Ts)  # значение ф-и на границе
+        xs = a*(np.cos(ksis) - e)
+        ys = a*np.sqrt(1 - e**2)*np.sin(ksis)
+        rs = np.array([xs, ys])
+        xr = a*(np.cos(ksir) - e)
+        yr = a*np.sqrt(1 - e**2)*np.sin(ksir)
+    else:
         vs = np.sqrt(2*(vabs**2/2 - alph/rabs + alph/Rs))
         ksis = - np.arccosh(((Rs + a*np.sign(alph))/a/e))
         ksir = np.arcsinh(r[1]/a/np.sqrt(e**2 - 1))
@@ -113,16 +104,15 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
         rs = np.array([xs, ys])
         xr = a*(e - np.sign(alph)*np.cosh(ksir))
         yr = a*np.sqrt(e**2 - 1)*np.sinh(ksir)
-        r = np.array([xr, yr])
-        tets = polarangle(rs)
-        tetr = polarangle(r)
-        M0 = np.sqrt(np.inner(M, M))
-        if tetr > np.pi:
-            extin = abs(tetr - tets)/M0
-        else:
-            extin = (2*np.pi - abs(tetr - tets))/M0
-        distr = fm*np.exp(-beta*L/V*extin)
-    return distr
+    r = np.array([xr, yr])
+    tets = polarangle(rs)
+    tetr = polarangle(r)
+    M0 = np.sqrt(np.inner(M, M))
+    if tetr > np.pi:
+        extin = abs(tetr - tets)/M0
+    else:
+        extin = (2*np.pi - abs(tetr - tets))/M0
+    return fm*np.exp(-beta*L/V*extin)
 
 
 def polarangle(r):

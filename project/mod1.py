@@ -72,7 +72,7 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
     vabs = np.sqrt(np.inner(v, v))  # скорость частицы на сфере
     if (vabs**2/2 - alph/rabs + alph/Rs) <= 0:
         return 0
-    if E > 0:
+    if E < 0:
         vs = np.sqrt(2*(vabs**2/2 - alph/rabs + alph/Rs))
         ksis = - np.arccos((1 - Rs/a)/e)
         ksir = np.sign(r[1])*np.arccos(r[0]/a+e)

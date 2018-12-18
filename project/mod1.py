@@ -34,16 +34,16 @@ sigtot = fos*np.pi*e_cgs**(2)/me_cgs/ligsp_cgs  # см^2/c
 def matrix3(r, v, alph):
     r_abs = np.linalg.norm(r)
     ez = np.cross(r, v)
-    ez_abs = np.sqrt(np.inner(ez, ez))
+    ez_abs = np.linalg.norm(ez)
     ez /= ez_abs
     vrv = np.cross(v, np.cross(r, v))
-    anr = np.array([alph*r[0]/r_abs, alph*r[1]/r_abs, alph*r[2]/r_abs])
+    anr = alph*r/r_abs
     ex = vrv - anr
-    ex_abs = np.sqrt(np.inner(ex, ex))
-    ex = np.array([ex[0]/ex_abs, ex[1]/ex_abs, ex[2]/ex_abs])
+    ex_abs = np.linalg.norm(ex)
+    ex /= ex_abs
     ey = np.cross(ez, ex)
-    eyabs = np.sqrt(np.inner(ey, ey))
-    ey = np.array([ey[0]/eyabs, ey[1]/eyabs, ey[2]/eyabs])
+    ey_abs = np.linalg.norm(ey)
+    ey /= ey_abs
     matr = np.stack([ex, ey, ez])
     return matr
 
@@ -69,7 +69,7 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
     M = np.cross(r, v)
     e = np.sqrt(1 + 2*E*np.inner(M, M)/alph**2)
     a = abs(alph/2/E)
-    vabs = np.sqrt(np.inner(v, v))  # скорость частицы на сфере
+    vabs = np.linalg.norm(v)  # скорость частицы на сфере
     if (vabs**2/2 - alph/rabs + alph/Rs) <= 0:
         return 0
     if E < 0:
@@ -81,7 +81,8 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
         vs3 = - np.sign(ksis)*tggam*vs/np.sqrt(1 + tggam**2)
         ws3 = 0
         v = np.array([us3, vs3, ws3])
-        par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2
+#        par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2
+        par = np.inner(Vs-v, Vs-v)
         fm = norm*np.exp(-m*par*V**2/2/kB/Ts)  # значение ф-и на границе
         xs = a*(np.cos(ksis) - e)
         ys = a*np.sqrt(1 - e**2)*np.sin(ksis)
@@ -97,7 +98,7 @@ def distrfunc2(r, v, Vs, mu, beta, Rs):
         vs3 = abs(tggam)*vs/np.sqrt(1 + tggam**2)
         ws3 = 0
         v = np.array([us3, vs3, ws3])
-        par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2
+        par = np.inner(Vs-v, Vs-v)
         fm = norm*np.exp(-m*par*V**2/2/kB/Ts)
         xs = a*(e - np.sign(alph)*np.cosh(ksis))
         ys = a*np.sqrt(e**2 - 1)*np.sinh(ksis)

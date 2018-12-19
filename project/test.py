@@ -13,16 +13,25 @@ from numpy.testing import assert_allclose
 class PolarangleTest(unittest.TestCase):
   
     def test1(self):
+      """
+      Polar angle of r=[0,1,0] equals to pi/2
+      """
       r = np.array([0,1,0])
       self.assertEqual(mod1.polarangle(r), np.pi/2, msg="""polar angle is 
                        incorrect, error1""")
       
     def test2(self):
+      """
+      Polar angle of r=[1,0,0] equals to 0
+      """
       r = np.array([1,0,0])
       self.assertEqual(mod1.polarangle(r), 0, msg="""polar angle is incorrect, 
                        error2""")
       
     def test3(self):
+      """
+      Polar angle of r=[-1,1,0] equals to 3pi/4
+      """
       r = np.array([-1,1,0])
       self.assertEqual(mod1.polarangle(r), 3*np.pi/4, msg="""polar angle is 
                        incorrect, error3""")

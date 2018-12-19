@@ -14,18 +14,25 @@ class PolarangleTest(unittest.TestCase):
   
     def test1(self):
       r = np.array([0,1,0])
-      self.assertEqual(mod1.polarangle(r), np.pi/2, msg="polar angle is incorrect, error1")
+      self.assertEqual(mod1.polarangle(r), np.pi/2, msg="""polar angle is 
+                       incorrect, error1""")
       
     def test2(self):
       r = np.array([1,0,0])
-      self.assertEqual(mod1.polarangle(r), 0, msg="polar angle is incorrect, error2")
+      self.assertEqual(mod1.polarangle(r), 0, msg="""polar angle is incorrect, 
+                       error2""")
       
     def test3(self):
       r = np.array([-1,1,0])
-      self.assertEqual(mod1.polarangle(r), 3*np.pi/4, msg="polar angle is incorrect, error3")
+      self.assertEqual(mod1.polarangle(r), 3*np.pi/4, msg="""polar angle is 
+                       incorrect, error3""")
       
       
 class DistributionTest(unittest.TestCase):
+    """
+    Check of equality of the distribution function to Maxwellian
+    distribution function on the heliosphere boundary
+    """
   
     def test1(self):
       Vin, dV, Vfin = -2.45, 0.06, 2.47
@@ -45,7 +52,7 @@ class DistributionTest(unittest.TestCase):
             par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2 
             arr_maxw[i][j] = mod1.norm*np.exp(-mod1.m*par*mod1.V**2/2/mod1.kB/mod1.Ts)
 
-      assert_allclose(arr_func, arr_maxw, atol=1e-9)
+      assert_allclose(arr_func, arr_maxw, atol=1e-10)
         
       
       

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Dec 19 13:41:13 2018
-
-@author: aleksandra
-"""
 
 from setuptools import setup
 
@@ -13,11 +8,11 @@ setup(
     author='Volosatykh Aleksandra',
     description='Distribution function of neutral H within the heliosphere',
     py_modles=['mod1', 'statdistr2D'],
-    # scripts=[''],
     test_suite='test',
-    #install_requirements=['numpy>=1', 'matplotlib>=1']
+    install_requirements=['numpy>=1.9', 'matplotlib>=3.0.2'],
     classifiers=[
         'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
     ],
     keywords='science astrophysics heliosphere'        

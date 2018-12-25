@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 31 14:03:55 2018
 
-@author: aleksandra
-"""
 import mod1 as mod
 import numpy as np
 import matplotlib.pyplot as plt

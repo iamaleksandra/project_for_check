@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Dec 19 01:23:45 2018
-
-@author: aleksandra
-"""
 
 import unittest
 import numpy as np

@@ -56,7 +56,4 @@ class DistributionTest(unittest.TestCase):
             par = (Vs[0] - v[0])**2 + (Vs[1] - v[1])**2 + (Vs[2] - v[2])**2 
             arr_maxw[i][j] = mod1.norm*np.exp(-mod1.m*par*mod1.V**2/2/mod1.kB/mod1.Ts)
 
-      assert_allclose(arr_func, arr_maxw, atol=1e-10)
-        
-      
-      
+      assert_allclose(arr_func, arr_maxw, atol=1e-10)      

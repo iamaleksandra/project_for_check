@@ -17,4 +17,3 @@ setup(
     ],
     keywords='science astrophysics heliosphere'        
 )
-

@@ -1,1 +1,1 @@
-# project_for_check
+# Course project
